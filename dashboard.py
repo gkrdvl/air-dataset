@@ -1,10 +1,23 @@
+import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import streamlit as st
 sns.set(style='dark')
 
-df = pd.read_csv("main_data.csv")
+# df = pd.read_csv("main_data.csv")
+
+dir_name = '.'
+dataframes = []
+for filename in os.listdir(dir_name):
+    if filename.endswith('.csv'):
+        df = pd.read_csv(os.path.join(filename))
+        dataframes.append(df)
+
+df = pd.concat(dataframes, ignore_index=True)
+
+df['created_at'] = pd.to_datetime(df[['year', 'month', 'day', 'hour']])
+df['year_month'] = df['year'].astype(str) + '-' + df['month'].astype(str).str.zfill(2)
 df['created_at'] = pd.to_datetime(df['created_at'])
 
 # Mengurutkan data berdasarkan tanggal
